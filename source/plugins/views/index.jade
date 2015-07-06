@@ -1,0 +1,33 @@
+doctype
+html
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+		title Heartbeat
+		link(rel='stylesheet', media="screen,projection", href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css')
+		link(rel='stylesheet', media="screen,projection", href='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-csp.css')
+		link(rel='stylesheet', media="screen,projection", href='app.css')
+	body.ng-cloak(ng-app="HeartbeatApp")
+		div.section.no-pad-top(ng-controller="FluxController as vm")
+			h1 Heartbeat
+			div
+				| total: {{ vm.stats.total }}; success: {{ vm.stats.success }}; fault: {{ vm.stats.fault }}
+			table.heartbeats.bordered.hoverable
+				thead
+					tr
+						th(data-field="action") Action
+						th(data-field="type") Type
+						th(data-field="payload") Payload
+				tbody
+					tr(ng-repeat="event in vm.events track by $index", ng-class="event.highlight")
+						td {{:: event.action }}
+						td {{:: event.type }}
+						td
+							pre {{:: event.payload | json }}
+
+		script(src='https://code.jquery.com/jquery-2.1.1.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-animate.min.js')
+		script(src="/socket.io/socket.io.js")
+		script(src="app.js")
