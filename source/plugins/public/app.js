@@ -2,49 +2,23 @@
 	var socket = io();
 
 	var app = angular.module('HeartbeatApp', ['ngAnimate']);
-	app.controller('FluxController', ['$scope', function($scope) {
+	app.controller('HeartbeatController', ['$scope', function($scope) {
 		var vm = this;
-		vm.events = [];
 		vm.stats = {};
+		vm.events = [];
 
-		return activate();
+		activate();
+		return vm;
 
 		function activate () {
 			clean_stats();
-			subscribe(function flux (event) {
-				console && console.log(event);
-				var data = prepare(event);
-				switch (data.action){
-					case 'begin': {
-						if (data.type == 'digest') {
-							clean_stats();
-						}
-						break;
-					}
-					case 'start': {
-						++vm.stats.total;
-						break;
-					}
-					case 'done': {
-						if (data.payload.success) {
-							++vm.stats.success;
-						}
-						else{
-							++vm.stats.fault;
-						}
-						break;
-					}
-				}
-				vm.events.push(data);
-			});
-		}
+			subscribe(flux_event);
 
-		function subscribe (callback) {
-			socket.on('flux', function (event) {
-				$scope.$apply(function(){
-					callback(event);
-				})
-			});
+			function flux_event (event) {
+				console && console.log(event);
+				var data = intercept(prepare(event));
+				vm.events.push(data);
+			}
 		}
 
 		function clean_stats () {
@@ -55,35 +29,68 @@
 			vm.events.length = 0;
 		}
 
+		function subscribe (callback) {
+			return socket.on('flux', function (event) {
+				$scope.$apply(function(){
+					callback(event);
+				})
+			});
+		}
+
 		function prepare (event) {
 			var payload = event.payload;
-			var data = {
+
+			return {
 				highlight: highlight(event),
 				action: event.action,
 				type: payload.type,
 				payload: payload.result || payload.payload || payload
 			};
-			return data;
+
+			function highlight (event) {
+				var classes = 'amber';
+				switch (event.action) {
+					case 'start': {
+						classes = 'blue';
+						break
+					}
+					case 'done': {
+						var result = event.payload.result;
+						if (result.success){
+							classes = 'green';
+						} else {
+							classes = 'red';
+						}
+						break;
+					}
+				}
+				return classes + ' lighten-1';
+			}
 		}
 
-		function highlight (event) {
-			var classes = 'amber';
-			switch (event.action) {
+		function intercept (data) {
+			switch (data.action){
+				case 'begin': {
+					if (data.type == 'digest') {
+						clean_stats();
+					}
+					break;
+				}
 				case 'start': {
-					classes = 'blue';
-					break
+					++vm.stats.total;
+					break;
 				}
 				case 'done': {
-					var result = event.payload.result;
-					if (result.success){
-						classes = 'green';
-					} else {
-						classes = 'red';
+					if (data.payload.success) {
+						++vm.stats.success;
+					}
+					else{
+						++vm.stats.fault;
 					}
 					break;
 				}
 			}
-			return classes + ' lighten-1';
+			return data;
 		}
 
 	}]);

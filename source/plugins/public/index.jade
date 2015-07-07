@@ -9,20 +9,20 @@ html
 		link(rel='stylesheet', media="screen,projection", href='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-csp.css')
 		link(rel='stylesheet', media="screen,projection", href='app.css')
 	body.ng-cloak(ng-app="HeartbeatApp")
-		div.section.no-pad-top(ng-controller="FluxController as vm")
+		div.section.no-pad-top(ng-controller="HeartbeatController as vm")
 			h1 Heartbeat
 			div
 				| total: {{ vm.stats.total }}; success: {{ vm.stats.success }}; fault: {{ vm.stats.fault }}
 			table.heartbeats.bordered.hoverable
 				thead
 					tr
-						th(data-field="action") Action
 						th(data-field="type") Type
+						th(data-field="action") Action
 						th(data-field="payload") Payload
 				tbody
 					tr(ng-repeat="event in vm.events track by $index", ng-class="event.highlight")
-						td {{:: event.action }}
 						td {{:: event.type }}
+						td {{:: event.action }}
 						td
 							pre {{:: event.payload | json }}
 
