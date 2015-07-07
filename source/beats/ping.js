@@ -1,18 +1,20 @@
 var tcpping = require('tcp-ping');
+var stopwatch = require('../utils/stopwatch');
 
 module.exports = function ping (options, callback) {
-	var started = new Date();
+	var timer = stopwatch.start();
 
-	tcpping.probe(options.ip, options.port || 80, function (error, resolved) {
-		var now = Date.now(), payload = {
-			at: now,
-			time: now - started,
-			success: !error && resolved,
-			request: options,
-			response: {
-				resolved: resolved
-			}
+	tcpping.probe(options.ip, options.port || 80, function handle (error, resolved) {
+		var payload = timer.stop();
+		payload.success = !error && resolved;
+		payload.request = options;
+		payload.response = {
+			resolved: !!resolved
 		};
+
+		if (error) {
+			payload.response.message = error.toString();
+		}
 
 		callback(null, payload);
 	});

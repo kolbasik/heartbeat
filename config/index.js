@@ -1,32 +1,25 @@
 module.exports = {
 	env: process.env.NODE_ENV || 'dev',
 
-	interval: 10000,
+	interval: 5000,
 
 	plugins: {
 		console: true,
-		server: true
+		server: {
+			port: process.env.PORT || 1337
+		}
 	},
 
 	monitor: {
+		ping: [
+			{ ip: '127.0.0.1' }
+		],
+		dns: [
+			{ dns: 'localhost' }
+		],
 		http: [
 			{
-				url: 'https://www.google.com.ua'
-			},
-			{
-				url: 'http://www.yandex.ru'
-			}
-		],
-
-		ping: [
-			{
-				ip: '127.0.0.1'
-			}
-		],
-
-		dns: [
-			{
-				dns: 'www.google.com.ua'
+				url: 'http://localhost:1337/'
 			}
 		]
 	}

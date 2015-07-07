@@ -1,25 +1,21 @@
 var request = require('request');
+var stopwatch = require('../utils/stopwatch');
 
 module.exports = function http (options, callback) {
-	var started = Date.now();
+	var timer = stopwatch.start();
 
-	request(options, function (error, response) {
-		var result = {};
+	request(options, function handle (error, response) {
+		var payload = timer.stop();
+		payload.success = !error && response.statusCode == (options.statusCode || 200);
+		payload.request =  options;
+		payload.response = {};
 
 		if (error) {
-			result.message = error.toString();
+			payload.response.message = error.toString();
 		}
-		else if (response && response.statusCode){
-			result.statusCode = response.statusCode;
+		if (response){
+			payload.response.statusCode = response.statusCode;
 		}
-
-		var now = Date.now(), payload = {
-			at: now,
-			time: now - started,
-			success: !error && response.statusCode == 200,
-			request: options,
-			response: result
-		};
 
 		callback(null, payload);
 	});

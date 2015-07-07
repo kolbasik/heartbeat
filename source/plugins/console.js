@@ -3,10 +3,9 @@ module.exports = {
 };
 
 function start (options) {
-	var flux = require('../utils/flux');
 	var logger = require('../utils/logger');
 
-	return flux.register(function (args) {
+	return function (args) {
 		switch (args.action) {
 
 			case 'start':
@@ -32,5 +31,5 @@ function start (options) {
 				break;
 			}
 		}
-	});
+	};
 }

@@ -22,7 +22,7 @@
 		}
 
 		function clean_stats () {
-			vm.stats.time = Date.now();
+			vm.stats.time = new Date();
 			vm.stats.total = 0;
 			vm.stats.success = 0;
 			vm.stats.fault = 0;

@@ -4,7 +4,6 @@ var async = require('async');
 var beats = require('./beats');
 var flux = require('./utils/flux');
 
-
 function heart(type, options) {
 	var beat = beats[type];
 

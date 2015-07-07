@@ -12,7 +12,7 @@ html
 		div.section.no-pad-top(ng-controller="HeartbeatController as vm")
 			h1 Heartbeat
 			div
-				| total: {{ vm.stats.total }}; success: {{ vm.stats.success }}; fault: {{ vm.stats.fault }}
+				| total: {{ vm.stats.total }}; success: {{ vm.stats.success }}; fault: {{ vm.stats.fault }}; time: {{ vm.stats.time }}
 			table.heartbeats.bordered.hoverable
 				thead
 					tr
@@ -24,7 +24,7 @@ html
 						td {{:: event.type }}
 						td {{:: event.action }}
 						td
-							pre {{:: event.payload | json }}
+							pre {{:: event.payload }}
 
 		script(src='https://code.jquery.com/jquery-2.1.1.min.js')
 		script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.min.js')

@@ -3,30 +3,31 @@ module.exports = {
 };
 
 function start (options) {
-	var path = require('path');
-	var express = require('express');
-	var app = express();
-	var server = require('http').Server(app);
-	var io = require('socket.io')(server);
+	var path = require('path'),
+		express = require('express'),
+		app = express(),
+		server = require('http').Server(app),
+		io = require('socket.io')(server);
 
-	app.set('port', process.env.PORT || 3000);
-	app.set('views', path.join(__dirname, 'public'));
+	var website = path.join(__dirname, 'public');
+
+	app.set('port', options.port || 1337);
+	app.set('views', website);
 	app.set('view engine', 'jade');
-	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(express.static(website));
 
 	app.get('/', function (req, res) {
-		res.render('index');
+		res.render('app');
 	});
 
 	server.listen(app.get('port'), function () {
-		var host = server.address().address;
-		var port = server.address().port;
+		var address = server.address();
 
-		console && console.log('Server is listening at http://%s:%s', host, port);
+		console.log('Server:', address);
+		console.log('Server is listening at http://%s:%s', address.address, address.port);
 	});
 
-	var flux = require('../utils/flux');
-	return flux.register(function(args) {
+	return function(args) {
 		io.emit('flux', args);
-	});
+	};
 }
